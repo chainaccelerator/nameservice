@@ -5,12 +5,12 @@ import (
 
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/chainaccelerator/nameservice/x/nameservice"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	"github.com/chainaccelerator/nameservice/x/nameservice"
 
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -27,7 +27,6 @@ const (
 type nameServiceApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
-	cdc *nameservice2.MsgBuyName
 
 	keyMain          *sdk.KVStoreKey
 	keyAccount       *sdk.KVStoreKey

@@ -11,18 +11,18 @@ import (
 type Keeper struct {
 	coinKeeper bank.Keeper
 
-	storeKey  sdk.StoreKey // Unexposed key to access store from sdk.Context
+	storeKey sdk.StoreKey // Unexposed key to access store from sdk.Context
 
 	cdc *codec.Codec // The wire codec for binary encoding/decoding.
 }
 
-// Sets the entire Whois metadata struct for a name
-func (k Keeper) SetWhois(ctx sdk.Context, name string, whois Whois) {
-	if whois.Owner.Empty() {
-		return
+// NewKeeper creates new instances of the nameservice Keeper
+func NewKeeper(coinKeeper bank.Keeper, storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
+	return Keeper{
+		coinKeeper: coinKeeper,
+		storeKey:   storeKey,
+		cdc:        cdc,
 	}
-	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(name), k.cdc.MustMarshalBinaryBare(whois))
 }
 
 // Gets the entire Whois metadata struct for a name
@@ -35,6 +35,15 @@ func (k Keeper) GetWhois(ctx sdk.Context, name string) Whois {
 	var whois Whois
 	k.cdc.MustUnmarshalBinaryBare(bz, &whois)
 	return whois
+}
+
+// Sets the entire Whois metadata struct for a name
+func (k Keeper) SetWhois(ctx sdk.Context, name string, whois Whois) {
+	if whois.Owner.Empty() {
+		return
+	}
+	store := ctx.KVStore(k.storeKey)
+	store.Set([]byte(name), k.cdc.MustMarshalBinaryBare(whois))
 }
 
 // ResolveName - returns the string that the name resolves to
@@ -66,7 +75,7 @@ func (k Keeper) SetOwner(ctx sdk.Context, name string, owner sdk.AccAddress) {
 	k.SetWhois(ctx, name, whois)
 }
 
-// GetPrice - gets the current price of a name.  If price doesn't exist yet, set to 1nametoken.
+// GetPrice - gets the current price of a name
 func (k Keeper) GetPrice(ctx sdk.Context, name string) sdk.Coins {
 	return k.GetWhois(ctx, name).Price
 }
@@ -81,14 +90,5 @@ func (k Keeper) SetPrice(ctx sdk.Context, name string, price sdk.Coins) {
 // Get an iterator over all names in which the keys are the names and the values are the whois
 func (k Keeper) GetNamesIterator(ctx sdk.Context) sdk.Iterator {
 	store := ctx.KVStore(k.storeKey)
-	return sdk.KVStorePrefixIterator(store, []byte{})
-}
-
-// NewKeeper creates new instances of the nameservice Keeper
-func NewKeeper(coinKeeper bank.Keeper, storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
-	return Keeper{
-		coinKeeper: coinKeeper,
-		storeKey:   storeKey,
-		cdc:        cdc,
-	}
+	return sdk.KVStorePrefixIterator(store, nil)
 }
