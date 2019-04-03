@@ -5,12 +5,12 @@ import (
 
 	"github.com/tendermint/tendermint/libs/log"
 
+	"github.com/chainaccelerator/nameservice/x/nameservice"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/chainaccelerator/nameservice/x/nameservice"
 
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -19,6 +19,7 @@ import (
 	dbm "github.com/tendermint/tendermint/libs/db"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
+
 const (
 	appName = "nameservice"
 )
@@ -26,6 +27,7 @@ const (
 type nameServiceApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
+	cdc *nameservice2.MsgBuyName
 
 	keyMain          *sdk.KVStoreKey
 	keyAccount       *sdk.KVStoreKey
@@ -41,30 +43,6 @@ type nameServiceApp struct {
 	nsKeeper            nameservice.Keeper
 }
 
-// NewNameServiceApp is a constructor function for nameServiceApp
-func NewNameServiceApp(logger log.Logger, db dbm.DB) *nameServiceApp {
-
-	// First define the top level codec that will be shared by the different modules
-	cdc := MakeCodec()
-
-	// BaseApp handles interactions with Tendermint through the ABCI protocol
-	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc))
-
-	// Here you initialize your application with the store keys it requires
-	var app = &nameServiceApp{
-		BaseApp: bApp,
-		cdc:     cdc,
-
-		keyMain:          sdk.NewKVStoreKey("main"),
-		keyAccount:       sdk.NewKVStoreKey("acc"),
-		keyNS:            sdk.NewKVStoreKey("ns"),
-		keyFeeCollection: sdk.NewKVStoreKey("fee_collection"),
-		keyParams:        sdk.NewKVStoreKey("params"),
-		tkeyParams:       sdk.NewTransientStoreKey("transient_params"),
-	}
-
-	return app
-}
 // NewNameServiceApp is a constructor function for nameServiceApp
 func NewNameServiceApp(logger log.Logger, db dbm.DB) *nameServiceApp {
 
@@ -148,6 +126,7 @@ func NewNameServiceApp(logger log.Logger, db dbm.DB) *nameServiceApp {
 
 	return app
 }
+
 // GenesisState represents chain state at the start of the chain. Any initial state (account balances) are stored here.
 type GenesisState struct {
 	AuthData auth.GenesisState   `json:"auth"`
@@ -205,6 +184,7 @@ func (app *nameServiceApp) ExportAppStateAndValidators() (appState json.RawMessa
 
 	return appState, validators, err
 }
+
 // MakeCodec generates the necessary codecs for Amino
 func MakeCodec() *codec.Codec {
 	var cdc = codec.New()
@@ -216,4 +196,3 @@ func MakeCodec() *codec.Codec {
 	codec.RegisterCrypto(cdc)
 	return cdc
 }
-

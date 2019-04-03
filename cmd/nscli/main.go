@@ -15,14 +15,14 @@ import (
 	amino "github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
 
+	app "github.com/chainaccelerator/nameservice"
+	nsclient "github.com/chainaccelerator/nameservice/x/nameservice/client"
+	nsrest "github.com/chainaccelerator/nameservice/x/nameservice/client/rest"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	auth "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/rest"
-	app "github.com/chainaccelerator/nameservice"
-	nsclient "github.com/chainaccelerator/nameservice/x/nameservice/client"
-	nsrest "github.com/chainaccelerator/nameservice/x/nameservice/client/rest"
 )
 
 const (
@@ -156,4 +156,3 @@ func initConfig(cmd *cobra.Command) error {
 	}
 	return viper.BindPFlag(cli.OutputFlag, cmd.PersistentFlags().Lookup(cli.OutputFlag))
 }
-
