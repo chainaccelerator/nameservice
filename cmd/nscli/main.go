@@ -21,7 +21,7 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/rest"
 	app "github.com/chainaccelerator/nameservice"
 	nsclient "github.com/chainaccelerator/nameservice/x/nameservice/client"
-/bin/bash: q : commande introuvable
+	nsrest "github.com/chainaccelerator/nameservice/x/nameservice/client/rest"
 )
 
 const (
