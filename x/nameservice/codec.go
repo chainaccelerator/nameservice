@@ -1,6 +1,7 @@
 package nameservice
 
 import (
+
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
